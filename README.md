@@ -1,69 +1,78 @@
-# React + TypeScript + Vite
+# Task Management Board
+A kanban-style task management board built using React, TypeScript, Tailwind CSS, and TanStack libraries. It enables users to organize their work efficiently across different stages (To Do, In Progress, Completed), with persistent data and a smooth drag-and-drop interface — all within a clean and responsive UI.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Objective
+This project simulates a real-world Trello-like productivity tool. It is built with modern frontend technologies to demonstrate:
+1. Type-safe form management (TanStack Form)
+2. State management using React Query with a simulated API using Promises and Callbacks
+3. Component reusability and responsiveness using Tailwind CSS
+4. Drag-and-drop task organisation using DnD Kit
+5. This is intended as a frontend coding challenge submission, showcasing clean architecture, performance awareness, and a user-friendly experience.
 
-Currently, two official plugins are available:
+## Features Implemented
+### 1. Task Creation
+- Users can create new tasks with a title and description.
+- The task is automatically added to the "To Do" column.
+- Modal opens via a “Create Task” button using ShadCN's modal component.
+- Validated using TanStack Form (fields required).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+ ### 2. Task Editing
+- Click on a task card to reopen the modal.
+- Existing task data is pre-filled for quick edits.
+- Data is updated locally and revalidated via useMutation().
 
-## Expanding the ESLint configuration
+### 3. Drag & Drop Tasks
+- Tasks can be moved across columns (To Do → In Progress → Completed).
+- Implemented using @dnd-kit/core, SortableContext, and sensors.
+- Drag-and-drop changes are persisted in localStorage.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 4. Persistent Storage with Simulated API
+- All data is saved to localStorage.
+- Simulated latency using setTimeout to mimic async behaviour.
+- TanStack Query is used to fetch, cache, and update tasks with loading states.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 5. Search Functionality
+- Live filter bar for searching tasks by title.
+- Case-insensitive and real-time filtering.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### 6. Responsive UI (Tailwind CSS)
+- Mobile, tablet, and desktop-friendly layout.
+- Drag-and-drop and modals are fully responsive.
+- Visuals adapt to screen size gracefully.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 7. Conditional UI Feedback
+- Tasks with due dates in the past are highlighted (e.g., red background).
+- Hover and transition effects for smooth UX.
+
+## Technologies Used
 ```
+| Tech               | Purpose                                |
+| ------------------ | -------------------------------------- |
+| React + TypeScript | Component architecture, type safety    |
+| Tailwind CSS       | Styling and layout                     |
+| TanStack Query     | Simulated API with caching & mutations |
+| TanStack Form      | Type-safe form validation & state      |
+| @dnd-kit/core      | Drag and drop functionality            |
+| ShadCN/UI + Radix  | Modals and accessible UI components    |
+| localStorage       | Persistent client-side storage         |
+| Vite               | Fast dev/build tooling                 |
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+## Stimulated Backend Behavior
+- Instead of using an actual backend, all task data is stored in localStorage.
+- Simulated delay using setTimeout() gives the impression of network calls.
+- This provides a real-world experience of fetching/loading states and cache updates via React Query.
+
+## Task Lifecycle
+1. User clicks Create Task
+2. Modal form opens, validates inputs with TanStack Form
+3. On submit:
+    - Task is added to "To Do"
+    - LocalStorage is updated
+    - React Query cache is updated
+4. User drags the task to "In Progress"
+    - React Query mutation is called
+    - LocalStorage and cache are updated again
+  
+## Landing Page
+<img width="1710" height="922" alt="task-management-landing-page" src="https://github.com/user-attachments/assets/43117739-8ce0-4b96-a010-1c4feef53a7a" />
