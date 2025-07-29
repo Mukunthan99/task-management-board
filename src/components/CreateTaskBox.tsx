@@ -143,7 +143,7 @@ function CreateTaskBox({
                 className="block w-full p-2 pl-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 appearance-none"
                 value={field.state.value}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  field.handleChange(e.target.value)
+                  field.handleChange(e.target.value as "Low" | "Medium" | "High")
                 }
               >
                 <option value="Low">Low</option>

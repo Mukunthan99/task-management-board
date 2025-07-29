@@ -13,6 +13,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
@@ -33,8 +34,12 @@ function TaskBoard() {
   //DnD setup using DndKit
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor)
-  );
+    useSensor(TouchSensor,  {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5,
+      }
+    }));
 
   // Handle drag end event to update task status or reorder tasks
   const handleDragEnd = (event: DragEndEvent) => {
@@ -102,8 +107,9 @@ function TaskBoard() {
   const queryClient = useQueryClient();
 
   // Simulate API delay for local storage operations
-  const simulateApiDelay = (result: any): Promise<Task[] | boolean> =>
-    new Promise((resolve) => setTimeout(() => resolve(result), 300));
+  function simulateApiDelay<T>(result: T): Promise<T> {
+    return new Promise((resolve) => setTimeout(() => resolve(result), 300));
+  }
 
   const loadTasks = async (): Promise<Task[]> => {
     const data = localStorage.getItem(TASKS_KEY);
@@ -146,63 +152,65 @@ function TaskBoard() {
   );
 
   return (
-    <div className="h-screen flex flex-col gap-4 bg-gray-100 p-6">
-      {/* Header component of task management board */}
-      <Header />
+    <div className="min-h-screen flex flex-col gap-4 bg-gray-100 p-4 sm:p-6 overflow-x-hidden">
+  <Header />
 
-      {/* Create task and search task section */}
-      <div className="relative w-full">
-        <button
-          onClick={openCreateModal}
-          type="button"
-          className="px-6 py-3.5 flex justify-center gap  font-bold text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center"
+  {/* Create task and search task section */}
+  <div className="flex flex-col items-center gap-4 w-full">
+    <button
+      onClick={openCreateModal}
+      type="button"
+      className="w-full sm:w-auto px-6 py-3.5 flex justify-center gap-2 font-bold text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center"
+    >
+      <IoCreateOutline size={25} /> <span>Create Task</span>
+    </button>
+
+    <input
+      type="text"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      placeholder="Search by title..."
+      className="sm:w-1/2 w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 placeholder:gray-400 placeholder:text-base"
+      
+    />
+  </div>
+
+  {/* Columns section */}
+  <DndContext
+    sensors={sensors}
+    collisionDetection={closestCorners}
+    onDragEnd={handleDragEnd}
+  >
+    <div className="columnContainer h-full flex flex-col sm:flex-row flex-1 gap-4 sm:gap-6 overflow-x-auto pb-4">
+      {["Todo", "In Progress", "Completed"].map((status) => (
+        <SortableContext
+          key={status}
+          items={filteredTasks
+            .filter((t) => t.status === status)
+            .map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
         >
-          <IoCreateOutline size={25} /> <span>Create Task</span>
-        </button>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by title..."
-          className="placeholder:text-lg absolute left-1/4 top-0 block w-1/2 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-      </div>
-
-      {/* Columns section implemented with DnD Context */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="columnContainer h-full flex flex-1 gap-6 overflow-auto">
-          {["Todo", "In Progress", "Completed"].map((status) => (
-            <SortableContext
-              key={status}
-              items={filteredTasks
-                .filter((t) => t.status === status)
-                .map((t) => t.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <Column
-                title={status}
-                tasks={filteredTasks.filter((t) => t.status === status)}
-                deleteMutation={deleteMutation}
-                handleEdit={handleEdit}
-              />
-            </SortableContext>
-          ))}
-        </div>
-      </DndContext>
-
-      {/* Task creation and editing modal section */}
-      <TaskModal
-        open={modalOpen}
-        onClose={handleClose}
-        taskToEdit={taskToEdit}
-        tasks={tasks}
-        mutation={mutation}
-      />
+          <Column
+            title={status}
+            tasks={filteredTasks.filter((t) => t.status === status)}
+            deleteMutation={deleteMutation}
+            handleEdit={handleEdit}
+          />
+        </SortableContext>
+      ))}
     </div>
+  </DndContext>
+
+  {/* Modal */}
+  <TaskModal
+    open={modalOpen}
+    onClose={handleClose}
+    taskToEdit={taskToEdit}
+    tasks={tasks}
+    mutation={mutation}
+  />
+</div>
+
   );
 }
 

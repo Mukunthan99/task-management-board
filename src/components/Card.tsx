@@ -28,8 +28,11 @@ function Card({ task, deleteMutation, handleEdit }: CardProps) {
         className={`m-1 w-full rounded-lg border border-gray-200 ${
           task.dueDate &&
           new Date(new Date(task.dueDate).toDateString()) <
-            new Date(new Date().toDateString())
+            new Date(new Date().toDateString()) &&
+          task.status !== "Completed"
             ? "bg-red-400"
+            : task.status === "Completed"
+            ? "bg-green-100"
             : "bg-white"
         } shadow-sm hover:shadow-md transition-shadow`}
       >
