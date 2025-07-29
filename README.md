@@ -75,4 +75,5 @@ This project simulates a real-world Trello-like productivity tool. It is built w
     - LocalStorage and cache are updated again
   
 ## Landing Page
-<img width="1710" height="922" alt="task-management-landing-page" src="https://github.com/user-attachments/assets/43117739-8ce0-4b96-a010-1c4feef53a7a" />
+<img width="1710" height="981" alt="task-management landing-page" src="https://github.com/user-attachments/assets/bb661051-4ae4-457a-8cdd-fa7a852f79b5" />
+
